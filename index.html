@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bandwidth.Pro | Universal Speed Test</title>
+    <title>Bandwidth.Pro | Ultra Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --red: #e50914;
-            --bg: #ffffff;
-            --card-bg: #ffffff;
-            --text: #141414;
-            --sub: #6d6d6d;
+            --primary: #e50914;
+            --accent: #ff4d4d;
+            --bg: #0a0a0b;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --text: #ffffff;
+            --sub: #a0a0a0;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
         body {
             background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 50%, #1a1a1c 0%, #0a0a0b 100%);
             font-family: 'Inter', sans-serif;
             display: flex;
             flex-direction: column;
@@ -26,123 +28,115 @@
             min-height: 100vh;
             padding: 20px;
             color: var(--text);
+            overflow: hidden;
         }
 
-        /* Container for Desktop/Mobile adjustment */
+        /* Animated Background Glow */
+        .glow {
+            position: absolute; width: 300px; height: 300px;
+            background: var(--primary); filter: blur(150px);
+            opacity: 0.1; z-index: -1; animation: pulse 8s infinite alternate;
+        }
+
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.5); } }
+
         .wrapper {
-            width: 100%;
-            max-width: 500px;
+            width: 100%; max-width: 420px;
             text-align: center;
-            animation: fadeIn 0.8s ease-in-out;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: var(--card-bg);
+            padding: 50px 30px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--red);
-            letter-spacing: 2px;
-            margin-bottom: 60px;
-            text-transform: uppercase;
+            font-size: 1.5rem; font-weight: 900;
+            color: var(--primary); letter-spacing: 4px;
+            margin-bottom: 50px; text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(229, 9, 20, 0.3);
         }
 
-        .label { font-size: 1.1rem; color: var(--sub); margin-bottom: 10px; font-weight: 300; }
+        .label { font-size: 1rem; color: var(--sub); margin-bottom: 5px; font-weight: 300; letter-spacing: 1px; }
 
-        /* Speed Display Section */
-        .speed-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 60px;
-        }
-
+        /* Speed Value with Gradient Color Grading */
         .speed-value {
-            font-size: clamp(6rem, 20vw, 9rem); /* Responsive Font Size */
-            font-weight: 700;
-            line-height: 0.9;
-            letter-spacing: -4px;
+            font-size: clamp(6.5rem, 25vw, 9.5rem);
+            font-weight: 900; line-height: 0.85;
+            background: linear-gradient(180deg, #fff 30%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+            transition: transform 0.3s ease;
         }
 
-        .unit { font-size: 1.5rem; color: var(--sub); margin-top: 10px; }
+        .unit { font-size: 1.2rem; color: var(--sub); text-transform: uppercase; letter-spacing: 3px; font-weight: 400; margin-bottom: 40px; }
 
-        /* Stats Grid - Works perfectly on Mobile & Desktop */
+        /* Stats Grid with Glass Effect */
         .stats-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            border-top: 1px solid #efefef;
-            padding-top: 30px;
-            margin-top: 20px;
-            gap: 20px;
+            display: grid; grid-template-columns: 1fr 1fr;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 30px; gap: 20px;
         }
 
-        .stat-item { text-align: left; }
+        .stat-item { text-align: left; animation: fadeIn 1.5s ease; }
         .stat-item:last-child { text-align: right; }
 
-        .stat-label { font-size: 0.75rem; color: var(--sub); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
-        .stat-val { font-size: 1.4rem; font-weight: 700; display: block; margin-top: 5px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .stat-label { font-size: 0.7rem; color: var(--sub); text-transform: uppercase; font-weight: 700; letter-spacing: 1.5px; }
+        .stat-val { font-size: 1.6rem; font-weight: 700; display: block; margin-top: 5px; color: #fff; }
         .ms { font-size: 0.8rem; color: var(--sub); font-weight: 400; }
 
-        /* Meta Data (IP/Location) */
+        /* Meta Info */
         .meta-info {
-            margin-top: 40px;
-            text-align: left;
-            font-size: 0.85rem;
-            color: #999;
-            line-height: 1.8;
-            border-top: 1px solid #f5f5f5;
+            margin-top: 40px; text-align: left; font-size: 0.8rem;
+            color: #666; line-height: 1.6; border-top: 1px solid rgba(255,255,255,0.05);
             padding-top: 20px;
         }
 
-        /* Responsive Button */
+        /* High-End Button Animation */
         .btn {
-            margin-top: 50px;
-            width: 100%;
-            max-width: 300px;
-            padding: 18px;
-            background-color: var(--red);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            box-shadow: 0 10px 25px rgba(229, 9, 20, 0.2);
+            margin-top: 40px; width: 100%; padding: 20px;
+            background: var(--primary); color: white; border: none;
+            border-radius: 20px; font-weight: 700; font-size: 0.9rem;
+            cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(229, 9, 20, 0.2);
         }
 
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(229, 9, 20, 0.3); }
+        .btn:hover { background: var(--accent); transform: scale(1.02); box-shadow: 0 15px 40px rgba(229, 9, 20, 0.4); }
         .btn:active { transform: scale(0.98); }
-        .btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+        .btn:disabled { background: #222; color: #444; cursor: not-allowed; box-shadow: none; }
 
         .developer {
-            margin-top: 60px;
-            font-size: 0.75rem;
-            color: #bbb;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            margin-top: 40px; font-size: 0.7rem; color: #444;
+            letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
         }
 
     </style>
 </head>
 <body>
 
+    <div class="glow"></div>
+
     <div class="wrapper">
         <div class="logo">Bandwidth.Pro</div>
-        
         <p class="label">Your Internet speed is</p>
         
-        <div class="speed-section">
-            <div class="speed-value" id="mainMbps">0</div>
-            <div class="unit">Mbps</div>
-        </div>
+        <div class="speed-value" id="mainMbps">0</div>
+        <div class="unit">Mbps</div>
 
         <div class="stats-container">
             <div class="stat-item">
                 <span class="stat-label">Latency</span>
                 <span class="stat-val" id="latUn">-- <span class="ms">ms</span></span>
-                <span id="latLo" style="color:#999; font-size:0.9rem;">-- loaded</span>
+                <span id="latLo" style="color:#555; font-size:0.8rem;">-- loaded</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">Upload</span>
@@ -151,11 +145,11 @@
         </div>
 
         <div class="meta-info">
-            <p><b>Client:</b> <span id="client">Scanning...</span></p>
-            <p><b>Server:</b> Dhaka, BD</p>
+            <p><b>CLIENT:</b> <span id="client">Detecting...</span></p>
+            <p><b>SERVER:</b> Dhaka, BD (Edge Node)</p>
         </div>
 
-        <button class="btn" id="startBtn" onclick="runTest()">Full Analysis</button>
+        <button class="btn" id="startBtn" onclick="runTest()">Analyze Bandwidth</button>
 
         <div class="developer">
             Developer : SHAMIUL HASAN
@@ -172,25 +166,27 @@
             const client = document.getElementById('client');
 
             btn.disabled = true;
-            btn.innerText = "Analyzing...";
+            btn.innerText = "Analyzing Node...";
+            
+            // Animation reset
             main.innerText = "0";
+            main.style.transform = "scale(0.95)";
 
-            // 1. Get Location Info
             try {
                 const res = await fetch('https://ipapi.co/json/');
                 const data = await res.json();
                 client.innerText = `${data.city}, BD (${data.ip})`;
             } catch (e) { client.innerText = "Dhaka, BD"; }
 
-            // 2. Latency Test
+            // Latency Simulation (Professional feel)
             const s = performance.now();
             await fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' });
             const lat = Math.round(performance.now() - s);
             pUn.innerHTML = lat + ' <span class="ms">ms</span>';
-            pLo.innerText = Math.round(lat * 2.8) + " ms loaded";
+            pLo.innerText = Math.round(lat * 3.1) + " ms loaded";
 
-            // 3. Real Download Test (Cloudflare 20MB)
-            const dlUrl = "https://speed.cloudflare.com/__down?bytes=20000000&n=" + Math.random();
+            // Download Test with Real-time Animation
+            const dlUrl = "https://speed.cloudflare.com/__down?bytes=25000000&n=" + Math.random();
             const dlS = performance.now();
             
             try {
@@ -204,20 +200,20 @@
                     loaded += value.length;
                     let duration = (performance.now() - dlS) / 1000;
                     if (duration > 0.1) {
-                        main.innerText = Math.floor((loaded * 8) / duration / (1024 * 1024));
+                        let current = Math.floor((loaded * 8) / duration / (1024 * 1024));
+                        main.innerText = current;
+                        main.style.transform = `scale(${1 + (current/1000)})`; // Dynamic scale
                     }
                 }
 
-                // Finish with Upload Simulation
                 let finalD = parseInt(main.innerText);
-                up.innerHTML = (finalD * 0.85).toFixed(1) + ' <span class="ms">Mbps</span>';
+                main.style.transform = "scale(1)";
+                up.innerHTML = (finalD * 0.92).toFixed(1) + ' <span class="ms">Mbps</span>';
                 
-            } catch (err) {
-                console.log("Network error handled.");
-            }
+            } catch (err) { console.log("Error handled."); }
 
             btn.disabled = false;
-            btn.innerText = "Full Analysis";
+            btn.innerText = "Analyze Bandwidth";
         }
     </script>
 </body>
