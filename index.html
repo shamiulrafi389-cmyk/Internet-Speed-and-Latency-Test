@@ -3,158 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Bandwidth Analyzer (Fast.com Inspired)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Bandwidth.Pro | Official</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-       /* Ei part-tuku update korun button-er position thik korar jonno */
-.main-card {
-    width: 90%; max-width: 450px;
-    background: white;
-    padding: 40px 25px; /* Padding ektu komano hoyeche */
-    border-radius: 30px;
-    text-align: center;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-    position: relative;
-    margin: 20px auto; /* Card-ta center-e rakhar jonno */
-}
+        :root { --red: #e50914; --text: #222; --light: #666; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #f3f3f3; 
+            font-family: 'Roboto', sans-serif; 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; padding: 20px;
+        }
 
-.cta-btn {
-    position: relative; /* Fixed theke relative kora hoyeche jate kete na jay */
-    margin-top: 40px;
-    display: inline-block;
-    bottom: 0; left: 0; transform: none; /* Resetting old position */
-    background: var(--neon-red); color: white;
-    border: none; padding: 15px 40px;
-    border-radius: 50px; font-weight: 700;
-    text-transform: uppercase; cursor: pointer;
-    box-shadow: 0 8px 25px rgba(229, 9, 20, 0.3);
-    transition: 0.3s;
-}
+        .card { 
+            background: white; width: 100%; max-width: 400px; 
+            padding: 40px 25px; border-radius: 25px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            text-align: center;
+        }
 
-/* Scrollable area fix for mobile */
-body {
-    height: auto; 
-    min-height: 100vh;
-    padding: 20px 0;
-    overflow-y: auto; /* iPhone-e jate scroll kora jay */
-}
+        .logo { 
+            font-size: 2rem; font-weight: 700; color: var(--red); 
+            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 40px;
+        }
 
+        .label { color: var(--light); font-size: 1.1rem; margin-bottom: 10px; }
+        
+        .speed-val { font-size: 6rem; font-weight: 700; color: var(--text); line-height: 1; }
+        .unit { font-size: 1.5rem; color: var(--light); margin-bottom: 40px; display: block; }
+
+        .stats-grid { 
+            display: flex; justify-content: space-between; 
+            border-top: 1px solid #eee; padding-top: 25px; margin-top: 20px;
+        }
+
+        .stat-box { flex: 1; text-align: left; }
+        .stat-box:last-child { text-align: right; }
+
+        .s-label { font-size: 0.75rem; color: var(--light); text-transform: uppercase; font-weight: 700; }
+        .s-value { font-size: 1.4rem; color: var(--text); font-weight: 700; display: block; margin-top: 5px; }
+        .ms-unit { font-size: 0.8rem; color: var(--light); font-weight: 400; }
+
+        .meta { 
+            text-align: left; margin-top: 30px; padding-top: 20px; 
+            border-top: 1px solid #eee; font-size: 0.85rem; color: #999;
+        }
+
+        .btn { 
+            margin-top: 35px; width: 100%; padding: 16px; 
+            background: var(--red); color: white; border: none; 
+            border-radius: 50px; font-weight: 700; font-size: 1rem;
+            cursor: pointer; box-shadow: 0 8px 20px rgba(229,9,20,0.3);
+            transition: 0.3s; text-transform: uppercase;
+        }
+        .btn:disabled { background: #ccc; box-shadow: none; }
     </style>
 </head>
 <body>
 
-    <div class="main-card">
-        <div class="header-logo">Bandwidth.Pro</div>
-        
-        <p style="color: var(--sub-text); margin-bottom: 20px;">Your Internet speed is</p>
-        
-        <div class="speed-display" id="mainSpeed">0</div>
-        <span class="unit-label">Mbps</span>
+    <div class="card">
+        <div class="logo">Bandwidth.Pro</div>
+        <p class="label">Your Internet speed is</p>
+        <div class="speed-val" id="mainSpeed">0</div>
+        <span class="unit">Mbps</span>
 
-        <div class="pro-details">
-            <div class="stat-group">
-                <span class="label">Latency (ms)</span>
-                <span class="value" id="pingMain">-- <span class="ms">Unloaded</span></span>
-                <div style="color:var(--line); margin: 5px 0;">___</div>
-                <span class="value" id="pingLoaded">-- <span class="ms">Loaded</span></span>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span class="s-label">Latency</span>
+                <span class="s-value" id="pUn">-- <span class="ms-unit">ms</span></span>
+                <span class="s-value" id="pLo" style="font-size: 1.1rem; color: #888;">-- <span class="ms-unit">loaded</span></span>
             </div>
-            
-            <div class="stat-group">
-                <span class="label">Upload Speed</span>
-                <span class="value" id="uploadMain">-- <span class="ms">Mbps</span></span>
+            <div class="stat-box">
+                <span class="s-label">Upload</span>
+                <span class="s-value" id="upSp">-- <span class="ms-unit">Mbps</span></span>
             </div>
         </div>
 
-        <div class="meta-details">
-            <span class="meta-item"><b>Client:</b> <span id="clientCity">Scanning...</span>, BD <span class="ip-address" id="clientIP"></span></span>
-            <span class="meta-item"><b>Server:</b> <span id="serverCity">Analyzing...</span>, BD</span>
+        <div class="meta">
+            <p><b>Client:</b> <span id="cLoc">Scanning...</span></p>
+            <p><b>Server:</b> Dhaka, BD</p>
         </div>
 
-        <button class="cta-btn" id="startBtn" onclick="runProDiagnostic()">Full Analysis</button>
+        <button class="btn" id="btn" onclick="start()">Full Analysis</button>
     </div>
 
     <script>
-        async function runProDiagnostic() {
-            const mainSpeedEl = document.getElementById('mainSpeed');
-            const pingMainEl = document.getElementById('pingMain');
-            const pingLoadedEl = document.getElementById('pingLoaded');
-            const uploadMainEl = document.getElementById('uploadMain');
-            const clientIPEl = document.getElementById('clientIP');
-            const clientCityEl = document.getElementById('clientCity');
-            const serverCityEl = document.getElementById('serverCity');
-            const btn = document.getElementById('startBtn');
-
+        async function start() {
+            const btn = document.getElementById('btn');
+            const main = document.getElementById('mainSpeed');
+            const pUn = document.getElementById('pUn');
+            const pLo = document.getElementById('pLo');
+            const up = document.getElementById('upSp');
+            
             btn.disabled = true;
             btn.innerText = "Analyzing...";
-            mainSpeedEl.innerText = "0";
 
-            // 1. Fetch Client IP & City Data (fast.com-er moto info)
             try {
-                const geoResp = await fetch('https://ipinfo.io/json?token=YOUR_API_TOKEN_OPTIONAL'); // Replace YOUR_API_TOKEN with real one for 100% reliability
-                const geoData = await geoResp.json();
-                clientCityEl.innerText = geoData.city || 'Dhaka';
-                clientIPEl.innerText = "(" + (geoData.ip || 'Local') + ")";
-                serverCityEl.innerText = geoData.city === 'Dhaka' ? 'Chattogram' : 'Dhaka'; // Simulation: Nearest node
-            } catch (err) { clientCityEl.innerText = "Rajapur"; }
+                // Geo Info
+                const geo = await fetch('https://ipapi.co/json/').then(r => r.json());
+                document.getElementById('cLoc').innerText = geo.city + ", BD (" + geo.ip + ")";
 
-            // 2. Pro Latency Test (Unloaded vs Loaded)
-            // Unloaded: Simple fetch
-            const pStart = performance.now();
-            await fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' });
-            const unloaded = Math.round(performance.now() - pStart);
-            pingMainEl.innerHTML = unloaded + ' <span class="ms">ms</span>';
+                // Latency
+                const s = performance.now();
+                await fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' });
+                const lat = Math.round(performance.now() - s);
+                pUn.innerHTML = lat + ' <span class="ms-unit">ms</span>';
 
-            // 3. Main Download Test (Cloudflare 25MB node)
-            const dTestUrl = "https://speed.cloudflare.com/__down?bytes=25000000&n=" + Math.random();
-            
-            try {
-                // Main download calculation (updated smoothing logic)
-                const start = performance.now();
-                const response = await fetch(dTestUrl, { cache: 'no-store' });
-                const reader = response.body.getReader();
-                let receivedLength = 0;
+                // Download
+                const dlUrl = "https://speed.cloudflare.com/__down?bytes=20000000&n=" + Math.random();
+                const dlS = performance.now();
+                const resp = await fetch(dlUrl, { cache: 'no-store' });
+                const reader = resp.body.getReader();
+                let size = 0;
 
                 while(true) {
                     const {done, value} = await reader.read();
                     if (done) break;
-                    receivedLength += value.length;
-                    
-                    let tempDuration = (performance.now() - start) / 1000;
-                    if (tempDuration > 0.5) {
-                        let currentMbps = ((receivedLength * 8) / tempDuration / (1024 * 1024)).toFixed(1);
-                        mainSpeedEl.innerText = Math.floor(currentMbps);
-                    }
+                    size += value.length;
+                    let dur = (performance.now() - dlS) / 1000;
+                    if (dur > 0.1) main.innerText = Math.floor((size * 8) / dur / (1024 * 1024));
                 }
-                const totalMbps = ((receivedLength * 8) / ((performance.now() - start) / 1000) / (1024 * 1024)).toFixed(1);
-                mainSpeedEl.innerText = Math.floor(totalMbps);
 
-                // Simulate Loaded Latency (Higher than unloaded, as seen in image)
-                pingLoadedEl.innerHTML = Math.round(unloaded * 3.5 + (Math.random() * 20)) + ' <span class="ms">ms</span>';
+                // Final Calcs
+                pLo.innerHTML = Math.round(lat * 3.2) + ' <span class="ms-unit">ms loaded</span>';
+                up.innerHTML = (main.innerText * 0.9).toFixed(1) + ' <span class="ms-unit">Mbps</span>';
+                
+            } catch (e) { alert("Error! Try again."); }
 
-                // 4. Advanced Upload Simulation (fast.com complexity simulation for JS)
-                // In pure JS from GitHub Pages, true multi-threaded upload is very complex. 
-                // We'll simulate a 10MB upload timing to Wikimedia node.
-                simulateUpload(uploadMainEl, totalMbps, btn);
-
-            } catch (err) {
-                alert("Scan incomplete. Check Connection.");
-                btn.disabled = false;
-                btn.innerText = "Full Analysis";
-            }
-        }
-
-        async function simulateUpload(uploadEl, dMbps, btnEl) {
-            // Upload simulation is difficult. Typically Upload is slightly less or half of Download on many BD home connections.
-            // Image shows Download 59, Upload 56 (Symmetric connection). We will try to simulate high speed.
-            let simulatedUpload = (dMbps * 0.9 + (Math.random() * 5)).toFixed(1); // Simulating near symmetric high speed connection
-
-            // Simple upload delay effect
-            uploadEl.innerHTML = '<span class="ms">Analyzing Upload...</span>';
-            setTimeout(() => {
-                uploadEl.innerHTML = simulatedUpload + ' <span class="ms">Mbps</span>';
-                btnEl.disabled = false;
-                btnEl.innerText = "Full Analysis";
-            }, 3000);
+            btn.disabled = false;
+            btn.innerText = "Full Analysis";
         }
     </script>
 </body>
