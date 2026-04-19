@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GigaSpeed Pro | 20MB High-Accuracy Test</title>
+    <title>GigaSpeed Pro | Professional Analyzer</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --neon: #00f3ff; --purple: #bc13fe; --bg: #05070a; }
@@ -32,10 +32,10 @@
         </div>
         <div class="stats-grid">
             <div class="stat-box"><span class="stat-label">Latency</span><span class="stat-value" id="ping">-- ms</span></div>
-            <div class="stat-box"><span class="stat-label">Test File</span><span class="stat-value">~20 MB</span></div>
+            <div class="stat-box"><span class="stat-label">Stability</span><span class="stat-value" id="status-text">Ready</span></div>
         </div>
         <button id="testBtn" onclick="runAccuracyTest()">START ANALYSIS</button>
-        <p id="status" style="margin-top: 20px; color: #475569; font-size: 0.75rem;">Stable 20MB Analysis Mode</p>
+        <p id="status" style="margin-top: 20px; color: #475569; font-size: 0.75rem;">Cloudflare Edge Node Analysis</p>
     </div>
 
     <script>
@@ -44,26 +44,24 @@
             const pingEl = document.getElementById('ping');
             const btn = document.getElementById('testBtn');
             const status = document.getElementById('status');
+            const statusText = document.getElementById('status-text');
 
             btn.disabled = true;
-            status.innerText = "Connecting to high-speed nodes...";
+            status.innerText = "Connecting to Cloudflare Edge...";
+            statusText.innerText = "Scanning...";
+            speedEl.innerText = "0";
             
-            // 1. Latency Check
             const pStart = performance.now();
             try {
+                // Latency test
                 await fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' });
                 pingEl.innerText = Math.round(performance.now() - pStart) + " ms";
-            } catch(e) { pingEl.innerText = "Error"; }
 
-            // 2. Real Download Test
-            // Amra Google ba Cloudflare-er kisu public cacheable assets use korbo
-            const testUrl = "https://lh3.googleusercontent.com/d/1_T09FhG3eXh8K5p8G9m6H-z_iE9_E9_E" + "?n=" + Math.random(); 
-            
-            status.innerText = "Streaming 20MB Dataset...";
-            
-            try {
+                // Real Data Download (25MB)
+                const testUrl = "https://speed.cloudflare.com/__down?bytes=25000000&n=" + Math.random();
+                
                 const start = performance.now();
-                const response = await fetch(testUrl, { mode: 'cors', cache: 'no-store' });
+                const response = await fetch(testUrl, { cache: 'no-store' });
                 
                 if (!response.ok) throw new Error();
 
@@ -75,51 +73,23 @@
                     if (done) break;
                     receivedLength += value.length;
                     
-                    // Live UI Update
                     let tempDuration = (performance.now() - start) / 1000;
-                    if (tempDuration > 0.1) {
+                    if (tempDuration > 0.2) {
                         let currentMbps = ((receivedLength * 8) / tempDuration / (1024 * 1024)).toFixed(1);
                         speedEl.innerText = Math.floor(currentMbps);
                     }
                 }
 
-                const end = performance.now();
-                const totalDuration = (end - start) / 1000;
-                const finalMbps = ((receivedLength * 8) / totalDuration / (1024 * 1024)).toFixed(2);
-
-                speedEl.innerText = Math.floor(finalMbps);
-                status.innerText = "Scan Complete (High Accuracy)";
+                status.innerText = "Scan Complete (Real Data)";
+                statusText.innerText = "Stable";
                 btn.disabled = false;
 
             } catch (err) {
-                // Jodi CORS error dey, tobe alternative simple method
-                status.innerText = "Switching to alternative node...";
-                fallbackTest(); 
+                status.innerText = "Connection Error. Try again.";
+                statusText.innerText = "Failed";
+                btn.disabled = false;
             }
         }
-
-        // Alternative method jodi prothom-ta block hoy
-        async function fallbackTest() {
-            const speedEl = document.getElementById('speed');
-            const btn = document.getElementById('testBtn');
-            const status = document.getElementById('status');
-            
-            const testUrl = "https://upload.wikimedia.org/wikipedia/commons/b/b3/Big_and_Small_Pumice.jpg";
-            const startTime = performance.now();
-            
-            const response = await fetch(testUrl, { mode: 'no-cors' }); 
-            // Note: no-cors mode-e response body read kora jay na, tai eikhane shudhu download completion mapbo
-            const endTime = performance.now();
-            
-            const duration = (endTime - startTime) / 1000;
-            const sizeInBits = 18 * 1024 * 1024 * 8; // Estimated size
-            const speedMbps = (sizeInBits / duration / (1024 * 1024)).toFixed(2);
-            
-            speedEl.innerText = Math.floor(speedMbps);
-            status.innerText = "Standard Accuracy Scan Done";
-            btn.disabled = false;
-        }
-
     </script>
 </body>
 </html>
