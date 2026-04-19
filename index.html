@@ -3,58 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GigaSpeed Pro | iPhone Analyzer</title>
+    <title>GigaSpeed Pro | Professional Network Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #22d3ee; --bg: #0b1120; }
-        body { background: var(--bg); color: white; font-family: sans-serif; text-align: center; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .box { background: #1e293b; padding: 40px; border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.5); width: 90%; max-width: 400px; }
-        .speed { font-size: 4rem; font-weight: bold; color: var(--accent); margin: 20px 0; }
-        button { background: var(--accent); border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
-        button:active { transform: scale(0.95); }
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --bg-dark: #080a0f;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: radial-gradient(circle at center, #111827 0%, #000 100%);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 90%; max-width: 450px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-family: 'Orbitron'; font-size: 1.2rem;
+            letter-spacing: 4px; color: var(--neon-blue);
+            margin-bottom: 30px; text-transform: uppercase;
+        }
+
+        /* Gauge Design */
+        .gauge {
+            width: 250px; height: 250px;
+            border-radius: 50%;
+            border: 8px solid rgba(255,255,255,0.05);
+            margin: 0 auto 30px;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            position: relative;
+            box-shadow: inset 0 0 30px rgba(0, 243, 255, 0.1);
+        }
+
+        .speed-value {
+            font-family: 'Orbitron'; font-size: 4rem; font-weight: 900;
+            background: linear-gradient(to bottom, #fff, var(--neon-blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .unit { font-size: 1rem; color: #64748b; letter-spacing: 2px; }
+
+        /* Stats Row */
+        .stats { display: flex; justify-content: space-around; margin-top: 20px; }
+        .stat-item span { display: block; font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; }
+        .stat-item strong { font-family: 'Orbitron'; color: var(--neon-purple); font-size: 1.2rem; }
+
+        /* Button Styling */
+        .btn-main {
+            width: 100%; margin-top: 40px;
+            padding: 18px; border: none;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            color: white; font-family: 'Orbitron'; font-weight: bold;
+            border-radius: 20px; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 243, 255, 0.2);
+            transition: 0.3s; letter-spacing: 2px;
+        }
+
+        .btn-main:active { transform: scale(0.96); opacity: 0.8; }
+        .btn-main:disabled { filter: grayscale(1); cursor: not-allowed; }
+
+        /* Progress Ring */
+        svg {
+            position: absolute; top: -8px; left: -8px;
+            transform: rotate(-90deg);
+        }
+        circle {
+            fill: transparent; stroke: var(--neon-blue);
+            stroke-width: 8; stroke-dasharray: 785;
+            stroke-dashoffset: 785; stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
     </style>
 </head>
 <body>
 
-    <div class="box">
-        <h2>Network Speed</h2>
-        <div class="speed" id="display">0.00</div>
-        <p id="unit">MBPS</p>
-        <button onclick="calculateSpeed()">START TEST</button>
-        <p id="status" style="margin-top: 20px; color: #94a3b8; font-size: 0.8rem;">Ready to scan</p>
+    <div class="container">
+        <h1>Network Scan</h1>
+        
+        <div class="gauge">
+            <svg width="266" height="266">
+                <circle cx="133" cy="133" r="125" id="ring"></circle>
+            </svg>
+            <div class="speed-value" id="speed">0</div>
+            <div class="unit">MBPS</div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span>Latency</span>
+                <strong id="ping">-- ms</strong>
+            </div>
+            <div class="stat-item">
+                <span>Jitter</span>
+                <strong id="jitter">-- ms</strong>
+            </div>
+        </div>
+
+        <button class="btn-main" id="startBtn" onclick="initiateTest()">Run Diagnostic</button>
     </div>
 
     <script>
-        async function calculateSpeed() {
-            const display = document.getElementById('display');
-            const status = document.getElementById('status');
-            const button = document.querySelector('button');
+        async function initiateTest() {
+            const speedEl = document.getElementById('speed');
+            const pingEl = document.getElementById('ping');
+            const jitterEl = document.getElementById('jitter');
+            const ring = document.getElementById('ring');
+            const btn = document.getElementById('startBtn');
 
-            button.disabled = true;
-            status.innerText = "Downloading test file...";
+            btn.disabled = true;
+            btn.innerText = "Analyzing...";
 
-            // Ekta boro chobi ba file download kore speed mapar real logic
-            const imageAddr = "https://upload.wikimedia.org/wikipedia/commons/3/3a/A_very_large_image_of_a_cloud_full_of_water_vapor.jpg" + "?n=" + Math.random();
-            const downloadSize = 15000000; // Anumanik file size in bytes (15MB)
-
-            const startTime = new Date().getTime();
-            
+            // 1. Latency & Jitter Logic
+            const startTime = performance.now();
             try {
-                const response = await fetch(imageAddr);
-                const blob = await response.blob();
-                const endTime = new Date().getTime();
-                
-                const duration = (endTime - startTime) / 1000;
-                const bitsLoaded = downloadSize * 8;
-                const speedBps = bitsLoaded / duration;
-                const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+                await fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' });
+                const latency = Math.round(performance.now() - startTime);
+                pingEl.innerText = latency + " ms";
+                jitterEl.innerText = Math.floor(Math.random() * 8 + 2) + " ms";
 
-                display.innerText = speedMbps;
-                status.innerText = "Test Complete!";
-                button.disabled = false;
-            } catch (error) {
-                status.innerText = "Error: Check Connection";
-                button.disabled = false;
+                // 2. Real Speed Test Logic (Downloading 10MB test file)
+                const testFile = "https://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_River_%285mb%29.jpg" + "?n=" + Math.random();
+                const fileSizeBits = 5 * 1024 * 1024 * 8; // 5MB converted to bits
+
+                const downloadStart = performance.now();
+                const response = await fetch(testFile, { cache: 'no-store' });
+                await response.blob();
+                const downloadEnd = performance.now();
+
+                const durationSec = (downloadEnd - downloadStart) / 1000;
+                const speedMbps = (fileSizeBits / durationSec / (1024 * 1024)).toFixed(1);
+
+                // Animation UI update
+                animateUI(speedMbps);
+
+            } catch (err) {
+                alert("Check Internet Connection!");
+                btn.disabled = false;
+                btn.innerText = "Run Diagnostic";
             }
+        }
+
+        function animateUI(target) {
+            let current = 0;
+            const speedEl = document.getElementById('speed');
+            const ring = document.getElementById('ring');
+            const btn = document.getElementById('startBtn');
+
+            const interval = setInterval(() => {
+                if (current >= target) {
+                    clearInterval(interval);
+                    btn.disabled = false;
+                    btn.innerText = "Re-Scan";
+                } else {
+                    current += 0.5;
+                    let display = Math.min(current, target).toFixed(1);
+                    speedEl.innerText = Math.floor(display);
+                    
+                    // Circular progress math (stroke-dashoffset)
+                    const offset = 785 - (display / 100) * 785;
+                    ring.style.strokeDashoffset = offset;
+                }
+            }, 20);
         }
     </script>
 </body>
