@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GigaSpeed Pro | iPhone Analyzer</title>
+    <style>
+        :root { --accent: #22d3ee; --bg: #0b1120; }
+        body { background: var(--bg); color: white; font-family: sans-serif; text-align: center; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .box { background: #1e293b; padding: 40px; border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.5); width: 90%; max-width: 400px; }
+        .speed { font-size: 4rem; font-weight: bold; color: var(--accent); margin: 20px 0; }
+        button { background: var(--accent); border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2>Network Speed</h2>
+        <div class="speed" id="display">0.00</div>
+        <p id="unit">MBPS</p>
+        <button onclick="calculateSpeed()">START TEST</button>
+        <p id="status" style="margin-top: 20px; color: #94a3b8; font-size: 0.8rem;">Ready to scan</p>
+    </div>
+
+    <script>
+        async function calculateSpeed() {
+            const display = document.getElementById('display');
+            const status = document.getElementById('status');
+            const button = document.querySelector('button');
+
+            button.disabled = true;
+            status.innerText = "Downloading test file...";
+
+            // Ekta boro chobi ba file download kore speed mapar real logic
+            const imageAddr = "https://upload.wikimedia.org/wikipedia/commons/3/3a/A_very_large_image_of_a_cloud_full_of_water_vapor.jpg" + "?n=" + Math.random();
+            const downloadSize = 15000000; // Anumanik file size in bytes (15MB)
+
+            const startTime = new Date().getTime();
+            
+            try {
+                const response = await fetch(imageAddr);
+                const blob = await response.blob();
+                const endTime = new Date().getTime();
+                
+                const duration = (endTime - startTime) / 1000;
+                const bitsLoaded = downloadSize * 8;
+                const speedBps = bitsLoaded / duration;
+                const speedMbps = (speedBps / (1024 * 1024)).toFixed(2);
+
+                display.innerText = speedMbps;
+                status.innerText = "Test Complete!";
+                button.disabled = false;
+            } catch (error) {
+                status.innerText = "Error: Check Connection";
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
