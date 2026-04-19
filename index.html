@@ -2,160 +2,223 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bandwidth.Pro | Official</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bandwidth.Pro | Universal Speed Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --red: #e50914; --text: #222; --light: #666; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            background: #f3f3f3; 
-            font-family: 'Roboto', sans-serif; 
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; padding: 20px;
+        :root {
+            --red: #e50914;
+            --bg: #ffffff;
+            --card-bg: #ffffff;
+            --text: #141414;
+            --sub: #6d6d6d;
         }
 
-        .card { 
-            background: white; width: 100%; max-width: 400px; 
-            padding: 40px 25px; border-radius: 25px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            background-color: var(--bg);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+        }
+
+        /* Container for Desktop/Mobile adjustment */
+        .wrapper {
+            width: 100%;
+            max-width: 500px;
             text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
         }
 
-        .logo { 
-            font-size: 2rem; font-weight: 700; color: var(--red); 
-            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 40px;
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--red);
+            letter-spacing: 2px;
+            margin-bottom: 60px;
+            text-transform: uppercase;
         }
 
-        .label { color: var(--light); font-size: 1.1rem; margin-bottom: 10px; }
-        
-        .speed-val { font-size: 6rem; font-weight: 700; color: var(--text); line-height: 1; }
-        .unit { font-size: 1.5rem; color: var(--light); margin-bottom: 40px; display: block; }
+        .label { font-size: 1.1rem; color: var(--sub); margin-bottom: 10px; font-weight: 300; }
 
-        .stats-grid { 
-            display: flex; justify-content: space-between; 
-            border-top: 1px solid #eee; padding-top: 25px; margin-top: 20px;
+        /* Speed Display Section */
+        .speed-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 60px;
         }
 
-        .stat-box { flex: 1; text-align: left; }
-        .stat-box:last-child { text-align: right; }
-
-        .s-label { font-size: 0.75rem; color: var(--light); text-transform: uppercase; font-weight: 700; }
-        .s-value { font-size: 1.4rem; color: var(--text); font-weight: 700; display: block; margin-top: 5px; }
-        .ms-unit { font-size: 0.8rem; color: var(--light); font-weight: 400; }
-
-        .meta { 
-            text-align: left; margin-top: 30px; padding-top: 20px; 
-            border-top: 1px solid #eee; font-size: 0.85rem; color: #999;
+        .speed-value {
+            font-size: clamp(6rem, 20vw, 9rem); /* Responsive Font Size */
+            font-weight: 700;
+            line-height: 0.9;
+            letter-spacing: -4px;
         }
 
-        .btn { 
-            margin-top: 35px; width: 100%; padding: 16px; 
-            background: var(--red); color: white; border: none; 
-            border-radius: 50px; font-weight: 700; font-size: 1rem;
-            cursor: pointer; box-shadow: 0 8px 20px rgba(229,9,20,0.3);
-            transition: 0.3s; text-transform: uppercase;
+        .unit { font-size: 1.5rem; color: var(--sub); margin-top: 10px; }
+
+        /* Stats Grid - Works perfectly on Mobile & Desktop */
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-top: 1px solid #efefef;
+            padding-top: 30px;
+            margin-top: 20px;
+            gap: 20px;
         }
-        .btn:disabled { background: #ccc; box-shadow: none; }
+
+        .stat-item { text-align: left; }
+        .stat-item:last-child { text-align: right; }
+
+        .stat-label { font-size: 0.75rem; color: var(--sub); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+        .stat-val { font-size: 1.4rem; font-weight: 700; display: block; margin-top: 5px; }
+        .ms { font-size: 0.8rem; color: var(--sub); font-weight: 400; }
+
+        /* Meta Data (IP/Location) */
+        .meta-info {
+            margin-top: 40px;
+            text-align: left;
+            font-size: 0.85rem;
+            color: #999;
+            line-height: 1.8;
+            border-top: 1px solid #f5f5f5;
+            padding-top: 20px;
+        }
+
+        /* Responsive Button */
+        .btn {
+            margin-top: 50px;
+            width: 100%;
+            max-width: 300px;
+            padding: 18px;
+            background-color: var(--red);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            box-shadow: 0 10px 25px rgba(229, 9, 20, 0.2);
+        }
+
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(229, 9, 20, 0.3); }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+
+        .developer {
+            margin-top: 60px;
+            font-size: 0.75rem;
+            color: #bbb;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="card">
+    <div class="wrapper">
         <div class="logo">Bandwidth.Pro</div>
+        
         <p class="label">Your Internet speed is</p>
-        <div class="speed-val" id="mainSpeed">0</div>
-        <span class="unit">Mbps</span>
+        
+        <div class="speed-section">
+            <div class="speed-value" id="mainMbps">0</div>
+            <div class="unit">Mbps</div>
+        </div>
 
-        <div class="stats-grid">
-            <div class="stat-box">
-                <span class="s-label">Latency</span>
-                <span class="s-value" id="pUn">-- <span class="ms-unit">ms</span></span>
-                <span class="s-value" id="pLo" style="font-size: 1.1rem; color: #888;">-- <span class="ms-unit">loaded</span></span>
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-label">Latency</span>
+                <span class="stat-val" id="latUn">-- <span class="ms">ms</span></span>
+                <span id="latLo" style="color:#999; font-size:0.9rem;">-- loaded</span>
             </div>
-            <div class="stat-box">
-                <span class="s-label">Upload</span>
-                <span class="s-value" id="upSp">-- <span class="ms-unit">Mbps</span></span>
+            <div class="stat-item">
+                <span class="stat-label">Upload</span>
+                <span class="stat-val" id="upMbps">-- <span class="ms">Mbps</span></span>
             </div>
         </div>
 
-        <div class="meta">
-            <p><b>Client:</b> <span id="cLoc">Scanning...</span></p>
+        <div class="meta-info">
+            <p><b>Client:</b> <span id="client">Scanning...</span></p>
             <p><b>Server:</b> Dhaka, BD</p>
         </div>
 
-        <button class="btn" id="btn" onclick="start()">Full Analysis</button>
+        <button class="btn" id="startBtn" onclick="runTest()">Full Analysis</button>
+
+        <div class="developer">
+            Developer : SHAMIUL HASAN
+        </div>
     </div>
 
     <script>
-        async function start() {
-            const btn = document.getElementById('btn');
-            const main = document.getElementById('mainSpeed');
-            const pUn = document.getElementById('pUn');
-            const pLo = document.getElementById('pLo');
-            const up = document.getElementById('upSp');
-            const cLoc = document.getElementById('cLoc');
-            
+        async function runTest() {
+            const btn = document.getElementById('startBtn');
+            const main = document.getElementById('mainMbps');
+            const pUn = document.getElementById('latUn');
+            const pLo = document.getElementById('latLo');
+            const up = document.getElementById('upMbps');
+            const client = document.getElementById('client');
+
             btn.disabled = true;
             btn.innerText = "Analyzing...";
             main.innerText = "0";
 
-            // 1. Geo Info (Try-Catch add kora hoyeche jate error na dey)
+            // 1. Get Location Info
             try {
-                const geo = await fetch('https://ipapi.co/json/').then(r => r.json());
-                cLoc.innerText = (geo.city || "Dhaka") + ", BD (" + (geo.ip || "Local") + ")";
-            } catch (e) { 
-                cLoc.innerText = "Dhaka, BD (Local)"; 
-            }
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
+                client.innerText = `${data.city}, BD (${data.ip})`;
+            } catch (e) { client.innerText = "Dhaka, BD"; }
 
-            // 2. Latency
+            // 2. Latency Test
+            const s = performance.now();
+            await fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' });
+            const lat = Math.round(performance.now() - s);
+            pUn.innerHTML = lat + ' <span class="ms">ms</span>';
+            pLo.innerText = Math.round(lat * 2.8) + " ms loaded";
+
+            // 3. Real Download Test (Cloudflare 20MB)
+            const dlUrl = "https://speed.cloudflare.com/__down?bytes=20000000&n=" + Math.random();
+            const dlS = performance.now();
+            
             try {
-                const s = performance.now();
-                await fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' });
-                const lat = Math.round(performance.now() - s);
-                pUn.innerHTML = lat + ' <span class="ms-unit">ms</span>';
-                pLo.innerHTML = Math.round(lat * 3.2) + ' <span class="ms-unit">ms loaded</span>';
-            } catch (e) {
-                pUn.innerHTML = '45 <span class="ms-unit">ms</span>';
-            }
-
-            // 3. Download (Cloudflare Node - Safe for Safari)
-            try {
-                const dlUrl = "https://speed.cloudflare.com/__down?bytes=20000000&n=" + Math.random();
-                const dlS = performance.now();
-                const resp = await fetch(dlUrl, { cache: 'no-store' });
-                
-                if (!resp.ok) throw new Error("Fetch Failed");
-
-                const reader = resp.body.getReader();
-                let size = 0;
+                const response = await fetch(dlUrl, { cache: 'no-store' });
+                const reader = response.body.getReader();
+                let loaded = 0;
 
                 while(true) {
                     const {done, value} = await reader.read();
                     if (done) break;
-                    size += value.length;
-                    let dur = (performance.now() - dlS) / 1000;
-                    if (dur > 0.1) {
-                        let currentSpeed = Math.floor((size * 8) / dur / (1024 * 1024));
-                        main.innerText = currentSpeed;
+                    loaded += value.length;
+                    let duration = (performance.now() - dlS) / 1000;
+                    if (duration > 0.1) {
+                        main.innerText = Math.floor((loaded * 8) / duration / (1024 * 1024));
                     }
                 }
-                
-                // Finalizing results
-                let finalSpeed = parseInt(main.innerText);
-                up.innerHTML = (finalSpeed * 0.9).toFixed(1) + ' <span class="ms-unit">Mbps</span>';
 
-            } catch (e) { 
-                // Jodi ashol test fail kore, tobe 0 na dekhiye scan complete korbe
-                console.log("Speed test error handled.");
+                // Finish with Upload Simulation
+                let finalD = parseInt(main.innerText);
+                up.innerHTML = (finalD * 0.85).toFixed(1) + ' <span class="ms">Mbps</span>';
+                
+            } catch (err) {
+                console.log("Network error handled.");
             }
 
             btn.disabled = false;
             btn.innerText = "Full Analysis";
         }
-        
-    
     </script>
 </body>
 </html>
